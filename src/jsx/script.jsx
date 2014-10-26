@@ -23,7 +23,7 @@ $(function(){
 	    filter(function(pic){ return pic.image_source.indexOf("instagram") > -1 }).
 	    map(function (pic) {
 	      return (
-	        <Pic author={pic.user} text={pic.tweet}>
+	        <Pic author={pic.user} text={pic.tweet} created={pic.created}>
 	          <div><img src={pic.image_source+"media?size=l"} className="image" /></div>
 	        </Pic>
 	      );

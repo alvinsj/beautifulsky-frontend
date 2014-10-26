@@ -24,7 +24,7 @@ $(function(){
 	    filter(function(pic){ return pic.image_source.indexOf("instagram") > -1 }).
 	    map(function (pic) {
 	      return (
-	        Pic({author: pic.user, text: pic.tweet}, 
+	        Pic({author: pic.user, text: pic.tweet, created: pic.created}, 
 	          React.DOM.div(null, React.DOM.img({src: pic.image_source+"media?size=l", className: "image"}))
 	        )
 	      );
