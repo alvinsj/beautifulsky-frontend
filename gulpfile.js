@@ -21,14 +21,7 @@ gulp.task('reload-chrome', shell.task(
 
 gulp.task('clean', function(cb) { del(['public/build', 'public/bower'], cb); });
 gulp.task('bower', function() { 
-    var jsFilter = filter('**/*.js');
-    var cssFilter = filter('**/*.css');
-    bower()
-        .pipe(cssFilter)
-        .pipe(gulp.dest('public/bower')) 
-
     return bower()
-        .pipe(jsFilter)
         .pipe(gulp.dest('public/bower')) 
 });
 gulp.task('react', function(){

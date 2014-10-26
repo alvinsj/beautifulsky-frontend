@@ -8,7 +8,7 @@ $(function(){
 	      	React.DOM.blockquote({className: "picText"}, 
 	        	this.props.text, 
 	        	React.DOM.div({className: "picAuthor"}, 
-	          		React.DOM.small(null, this.props.author)
+	          		React.DOM.small(null, this.props.author, ", ", moment(this.props.created).fromNow())
 	        	)
 	        ), 
 	        
