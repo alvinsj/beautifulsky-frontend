@@ -7,7 +7,7 @@ $(function(){
 	      	<blockquote className="picText" >
 	        	{this.props.text}
 	        	<div className="picAuthor">
-	          		<small>{this.props.author}</small>
+	          		<small>{this.props.author}, {moment(this.props.created).fromNow()}</small>
 	        	</div>
 	        </blockquote>
 	        
