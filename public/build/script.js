@@ -52,22 +52,26 @@ $(function(){
 	  getInitialState: function() {
 	    return {data: []};
 	  },
+
 	  loadPicsFromServer: function() {
-	    $.ajax({
-	      url: this.props.url,
-	      dataType: 'json',
-	      success: function(data) {
-	        this.setState({data: data});
-	      }.bind(this),
-	      error: function(xhr, status, err) {
-	        console.error(this.props.url, status, err.toString());
-	      }.bind(this)
-	    });
+	  	var toLower = function(s){
+		   return s.toLowerCase();
+		}
+		
+        oboe('images')
+        .node('user', toLower)
+        .node('created', toLower)
+        .node('!.*', function(pic){           	
+           	var arr = this.state.data;
+           	arr.push(pic)
+            this.setState({data: arr});
+        }.bind(this));
 	  },
+
 	  componentDidMount: function() {
 	    this.loadPicsFromServer();
-	    //setInterval(this.loadPicsFromServer, this.props.pollInterval);
 	  },
+
 	  render: function() {
 	    return (
 	      React.DOM.div({className: "picBox"}, 
