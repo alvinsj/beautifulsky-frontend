@@ -54,18 +54,12 @@ $(function(){
 	  },
 
 	  loadPicsFromServer: function() {
-	  	var toLower = function(s){
-		   return s.toLowerCase();
-		}
-		
-        oboe('images')
-        .node('user', toLower)
-        .node('created', toLower)
-        .node('!.*', function(pic){           	
-           	var arr = this.state.data;
-           	arr.push(pic)
-            this.setState({data: arr});
-        }.bind(this));
+        	oboe('tweets')
+        	.node('!.*', function(pic){           	
+           		var arr = this.state.data;
+           		arr.push(pic)
+            		this.setState({data: arr});
+        	}.bind(this));
 	  },
 
 	  componentDidMount: function() {

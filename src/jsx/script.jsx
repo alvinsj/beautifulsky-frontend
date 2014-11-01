@@ -53,9 +53,7 @@ $(function(){
 	  },
 
 	  loadPicsFromServer: function() {
-        	oboe('images')
-        	.node('user', toLower)
-        	.node('created', toLower)
+        	oboe('tweets')
         	.node('!.*', function(pic){           	
            		var arr = this.state.data;
            		arr.push(pic)
