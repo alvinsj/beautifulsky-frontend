@@ -8,9 +8,9 @@ var gulp = require('gulp'),
 
 gulp.task('watch',function(){
     gulp.watch('public/**/*.html', ['reload-chrome']);
-    gulp.watch('src/jsx/**/*.jsx', ['react','reload-chrome']);
+    gulp.watch('src/js/**/*.jsx', ['react','reload-chrome']);
 });
-gulp.task('default',['clean', 'bower', 'react'], function(){ 
+gulp.task('default',['clean', 'bower', 'react'], function(){
 });
 
 gulp.task('reload-chrome', shell.task(
@@ -20,12 +20,12 @@ gulp.task('reload-chrome', shell.task(
         | xargs -L1 chrome-cli reload -t']));
 
 gulp.task('clean', function(cb) { del(['public/build', 'public/bower'], cb); });
-gulp.task('bower', function() { 
+gulp.task('bower', function() {
     return bower()
-        .pipe(gulp.dest('public/bower')) 
+        .pipe(gulp.dest('public/bower'))
 });
 gulp.task('react', function(){
-    return gulp.src('src/jsx/**/*.jsx')
+    return gulp.src('src/js/**/*.jsx')
         .pipe(react())
         .pipe(gulp.dest('public/build'))
 });
