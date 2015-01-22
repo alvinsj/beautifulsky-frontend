@@ -19,7 +19,7 @@ gulp.task('reload-chrome', shell.task(
         | sed -E "s/\\[([0-9]+:)?(.*)\\](.*)/\\2/" \
         | xargs -L1 chrome-cli reload -t']));
 
-gulp.task('clean', function(cb) { del(['public/build', 'public/bower'], cb); });
+gulp.task('clean', function(cb) { del(['public/build/*', 'public/bower/*'], cb); });
 gulp.task('bower', function() {
     return bower()
         .pipe(gulp.dest('public/bower'))
