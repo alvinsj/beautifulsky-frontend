@@ -16,6 +16,7 @@
     "react": "~0.11.2",
     "oboe": "~2.0.2",
     "flexo": "~1.0.2",
-    "Autolinker.js": "~0.15.2"
+    "Autolinker.js": "~0.15.2",
+    "underscore": "~1.8.3"
   }
 }
