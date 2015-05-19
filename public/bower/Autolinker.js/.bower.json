@@ -24,15 +24,14 @@
     "tests",
     "vendor"
   ],
-  "version": "0.15.2",
-  "_release": "0.15.2",
+  "version": "0.15.3",
+  "_release": "0.15.3",
   "_resolution": {
     "type": "version",
-    "tag": "0.15.2",
-    "commit": "53c3f5f24cf3a7508af83f70feb8d8fd1c0946ce"
+    "tag": "0.15.3",
+    "commit": "22eaf6e447bf525a519b298246c679a9805ec531"
   },
   "_source": "git://github.com/gregjacobs/Autolinker.js.git",
   "_target": "~0.15.2",
-  "_originalSource": "Autolinker.js",
-  "_direct": true
+  "_originalSource": "Autolinker.js"
 }
