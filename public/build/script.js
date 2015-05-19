@@ -25,22 +25,30 @@ function timeSince(date) {
 }
 
 var Pic = React.createClass({displayName: 'Pic',
-  render: function() {
-      return (
-          React.DOM.div({className: "pic"}, 
+    getInitialState: function(){
+        return {showText: false}
+    },
+    render: function() {
+        return (
+          React.DOM.div({className: "pic", onClick: this._handleClick}, 
+             this.state.showText ? 
           	React.DOM.blockquote({className: "picText"}, 
             	React.DOM.div({dangerouslySetInnerHTML: {__html: Autolinker.link(this.props.text)}}), 
             	React.DOM.div({className: "picAuthor"}, 
               		React.DOM.small(null, 
-    				    React.DOM.span({dangerouslySetInnerHTML: {__html: Autolinker.link(this.props.author)}}), 
+        			    React.DOM.span({dangerouslySetInnerHTML: {__html: Autolinker.link(this.props.author)}}), 
                         ", ", timeSince(new Date(this.props.created)), " ago"
                     )
             	)
-            ), 
+            )
+            : React.DOM.div(null), 
             this.props.children
           )
-      );
-  }
+        );
+    },
+    _handleClick: function(){
+        this.setState({showText: !this.state.showText})
+    }
 });
 
 var PicList = React.createClass({displayName: 'PicList',
