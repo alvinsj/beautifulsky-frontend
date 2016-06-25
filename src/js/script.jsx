@@ -31,7 +31,9 @@ var Pic = React.createClass({
         return (
             <div className="pic"
                 onTouchStart={this._handleTouchStart}
-                onTouchEnd={_handleTouchEnd}>
+                onTouchEnd={this._handleTouchEnd}
+                onMouseEnter={this._handleTouchStart}
+                onMouseLeave={this._handleTouchEnd}>
                 <blockquote
                     className={"picText"+(this.state.showText ? ' hover' : '')}>
                     <div dangerouslySetInnerHTML={{__html: Autolinker.link(this.props.text)}} />
@@ -59,8 +61,8 @@ var Pic = React.createClass({
             var calc = {instagram: 0, twimg: 0, display: 0};
             var picNodes = this.props.data
             .filter(function(pic){
-                var instagram = pic.image_source.indexOf("https://instagram") == 0;
-                var twimg = pic.image_source.indexOf("http://pbs.twimg") == 0;
+                var instagram = pic.image_source.indexOf("www.instagram") > -1;
+                var twimg = pic.image_source.indexOf("pbs.twimg") > -1;
                 calc["instagram"] += instagram ? 1 : 0;
                 calc["twimg"] += twimg ? 1 : 0;
                 return instagram || twimg;
@@ -69,7 +71,7 @@ var Pic = React.createClass({
             var index, elements = [];
             for(index = picNodes.length-1; index > -1 ; index-- ) {
                 var pic = picNodes[index];
-                if(pic.image_source.indexOf("https://instagram") > -1
+                if(pic.image_source.indexOf("https://www.instagram") > -1
                 && pic.image_source.indexOf("media?size=l") == -1) {
                     pic["image_source"]= pic.image_source + "media?size=l"
                 }
