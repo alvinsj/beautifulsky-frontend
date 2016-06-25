@@ -132,7 +132,16 @@ var Pic = React.createClass({displayName: 'Pic',
         },
 
         render: function() {
-            return PicList({data: this.state.data});
+            var searches = this.state.data.filter(function(item){ return item.source === 'search'}).length;
+            var caches = this.state.data.filter(function(item){ return item.source !== 'search'}).length;
+            console.log('new data size:',
+                this.state.data.length,
+                'searches: ', searches,
+                'cached: ', caches);
+            return (React.DOM.div(null, 
+                React.DOM.small(null, "searches: ", searches, ", caches: ", caches), 
+                PicList({data: this.state.data})
+            ));
         }
     });
 
