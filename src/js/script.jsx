@@ -29,108 +29,111 @@ var Pic = React.createClass({
     },
     render: function() {
         return (
-          <div className="pic" onClick={this._handleClick}>
-            { this.state.showText ? 
-          	<blockquote className="picText">
-            	<div dangerouslySetInnerHTML={{__html: Autolinker.link(this.props.text)}} />
-            	<div className="picAuthor">
-              		<small>
-        			    <span dangerouslySetInnerHTML={{__html: Autolinker.link(this.props.author)}} />
-                        , {timeSince(new Date(this.props.created))} ago
-                    </small>
-            	</div>
-            </blockquote>
-            : <div />}
-            {this.props.children}
-          </div>
-        );
-    },
-    _handleClick: function(){
-        this.setState({showText: !this.state.showText})
-    }
-});
-
-var PicList = React.createClass({
-render: function() {
-    var calc = {instagram: 0, twimg: 0, display: 0};
-    var picNodes = this.props.data
-        .filter(function(pic){
-            var instagram = pic.image_source.indexOf("https://instagram") == 0;
-            var twimg = pic.image_source.indexOf("http://pbs.twimg") == 0;
-            calc["instagram"] += instagram ? 1 : 0;
-            calc["twimg"] += twimg ? 1 : 0;
-            return instagram || twimg;
-        });
-    // reverse
-    var index, elements = [];
-    for(index = picNodes.length-1; index > -1 ; index-- ) {
-        var pic = picNodes[index];
-        if(pic.image_source.indexOf("https://instagram") > -1 
-            && pic.image_source.indexOf("media?size=l") == -1) {
-            pic["image_source"]= pic.image_source + "media?size=l"
+            <div className="pic"
+                onTouchStart={this._handleTouchStart}
+                onTouchEnd={_handleTouchEnd}>
+                <blockquote
+                    className={"picText"+(this.state.showText ? ' hover' : '')}>
+                    <div dangerouslySetInnerHTML={{__html: Autolinker.link(this.props.text)}} />
+                    <div className="picAuthor">
+                        <small>
+                            <span dangerouslySetInnerHTML={{__html: Autolinker.link(this.props.author)}} />
+                            , {timeSince(new Date(this.props.created))} ago
+                        </small>
+                    </div>
+                </blockquote>
+                {this.props.children}
+            </div>
+            );
+        },
+        _handleTouchStart: function(){
+            this.setState({showText: true})
+        },
+        _handleTouchEnd: function(){
+            this.setState({showText: false})
         }
+    });
 
-        elements.push(
-            <Pic key={index} author={pic.user} text={pic.tweet} created={pic.created} >
-                <div><img src={pic.image_source} className="image" /></div>
-            </Pic>
-        );
-    }
-    calc.display = elements.length
-    console.log(calc)
-
-    return (
-        <div className="picList" data-flex="horizontal wrap grow">
-            {elements}
-        </div>
-    );
-  }
-});
-
-var BeautifulSky = React.createClass({
-    getInitialState: function() {
-        return {data: [], indexes: {}, duplicates: 0};
-    },
-
-    loadPicsFromServer: function() {
-        oboe('tweets')
-        .node('!.*', function(pic){
-        	var data = this.state.data;
-        	var indexes = this.state.indexes;
-            var newData = data;
-            var duplicates = this.state.duplicates
-
-            if(!indexes[pic.tweet_id]){
-                indexes[pic.tweet_id] = true
-                
-                var i = _.sortedIndex(data, pic, function(item){ return new Date(item.created).getTime() }); 
-                var newData = _.initial(data, data.length-i)
-                    .concat([pic])
-                    .concat(_.rest(data, i));    
-
-            }else{
-                duplicates += 1;
-                //console.log('duplicates', duplicates);
-            }
-
-            this.setState({
-                duplicates: duplicates,
-                indexes: indexes, 
-                data: newData
+    var PicList = React.createClass({
+        render: function() {
+            var calc = {instagram: 0, twimg: 0, display: 0};
+            var picNodes = this.props.data
+            .filter(function(pic){
+                var instagram = pic.image_source.indexOf("https://instagram") == 0;
+                var twimg = pic.image_source.indexOf("http://pbs.twimg") == 0;
+                calc["instagram"] += instagram ? 1 : 0;
+                calc["twimg"] += twimg ? 1 : 0;
+                return instagram || twimg;
             });
-        }.bind(this));
-    },
+            // reverse
+            var index, elements = [];
+            for(index = picNodes.length-1; index > -1 ; index-- ) {
+                var pic = picNodes[index];
+                if(pic.image_source.indexOf("https://instagram") > -1
+                && pic.image_source.indexOf("media?size=l") == -1) {
+                    pic["image_source"]= pic.image_source + "media?size=l"
+                }
 
-    componentDidMount: function() {
-        this.loadPicsFromServer();
-    },
+                elements.push(
+                    <Pic key={index} author={pic.user} text={pic.tweet} created={pic.created} >
+                        <div><img src={pic.image_source} className="image" /></div>
+                    </Pic>
+                );
+            }
+            calc.display = elements.length;
 
-    render: function() {
-        return <PicList data={this.state.data} />;
-    }
-});
+            return (
+                <div className="picList" data-flex="horizontal wrap grow">
+                    {elements}
+                </div>
+            );
+        }
+    });
 
-React.renderComponent(
-    <BeautifulSky url="/images" pollInterval={2000} />,
-    document.getElementById('content')
-);
+    var BeautifulSky = React.createClass({
+        getInitialState: function() {
+            return {data: [], indexes: {}, duplicates: 0};
+        },
+
+        loadPicsFromServer: function() {
+            oboe('tweets')
+            .node('!.*', function(pic){
+                var data = this.state.data;
+                var indexes = this.state.indexes;
+                var newData = data;
+                var duplicates = this.state.duplicates
+
+                if(!indexes[pic.tweet_id]){
+                    indexes[pic.tweet_id] = true
+
+                    var i = _.sortedIndex(data, pic,
+                        function(item){ return new Date(item.created).getTime() });
+                    var newData = _.initial(data, data.length-i)
+                        .concat([pic])
+                        .concat(_.rest(data, i));
+
+                }else{
+                    duplicates += 1;
+                }
+
+                this.setState({
+                    duplicates: duplicates,
+                    indexes: indexes,
+                    data: newData
+                });
+            }.bind(this));
+        },
+
+        componentDidMount: function() {
+            this.loadPicsFromServer();
+        },
+
+        render: function() {
+            return <PicList data={this.state.data} />;
+        }
+    });
+
+    React.renderComponent(
+        <BeautifulSky url="/images" pollInterval={2000} />,
+        document.getElementById('content')
+    );

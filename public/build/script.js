@@ -30,108 +30,111 @@ var Pic = React.createClass({displayName: 'Pic',
     },
     render: function() {
         return (
-          React.DOM.div({className: "pic", onClick: this._handleClick}, 
-             this.state.showText ? 
-          	React.DOM.blockquote({className: "picText"}, 
-            	React.DOM.div({dangerouslySetInnerHTML: {__html: Autolinker.link(this.props.text)}}), 
-            	React.DOM.div({className: "picAuthor"}, 
-              		React.DOM.small(null, 
-        			    React.DOM.span({dangerouslySetInnerHTML: {__html: Autolinker.link(this.props.author)}}), 
-                        ", ", timeSince(new Date(this.props.created)), " ago"
+            React.DOM.div({className: "pic", 
+                onTouchStart: this._handleTouchStart, 
+                onTouchEnd: _handleTouchEnd}, 
+                React.DOM.blockquote({
+                    className: "picText"+(this.state.showText ? ' hover' : '')}, 
+                    React.DOM.div({dangerouslySetInnerHTML: {__html: Autolinker.link(this.props.text)}}), 
+                    React.DOM.div({className: "picAuthor"}, 
+                        React.DOM.small(null, 
+                            React.DOM.span({dangerouslySetInnerHTML: {__html: Autolinker.link(this.props.author)}}), 
+                            ", ", timeSince(new Date(this.props.created)), " ago"
+                        )
                     )
-            	)
+                ), 
+                this.props.children
             )
-            : React.DOM.div(null), 
-            this.props.children
-          )
-        );
-    },
-    _handleClick: function(){
-        this.setState({showText: !this.state.showText})
-    }
-});
-
-var PicList = React.createClass({displayName: 'PicList',
-render: function() {
-    var calc = {instagram: 0, twimg: 0, display: 0};
-    var picNodes = this.props.data
-        .filter(function(pic){
-            var instagram = pic.image_source.indexOf("https://instagram") == 0;
-            var twimg = pic.image_source.indexOf("http://pbs.twimg") == 0;
-            calc["instagram"] += instagram ? 1 : 0;
-            calc["twimg"] += twimg ? 1 : 0;
-            return instagram || twimg;
-        });
-    // reverse
-    var index, elements = [];
-    for(index = picNodes.length-1; index > -1 ; index-- ) {
-        var pic = picNodes[index];
-        if(pic.image_source.indexOf("https://instagram") > -1 
-            && pic.image_source.indexOf("media?size=l") == -1) {
-            pic["image_source"]= pic.image_source + "media?size=l"
+            );
+        },
+        _handleTouchStart: function(){
+            this.setState({showText: true})
+        },
+        _handleTouchEnd: function(){
+            this.setState({showText: false})
         }
+    });
 
-        elements.push(
-            Pic({key: index, author: pic.user, text: pic.tweet, created: pic.created}, 
-                React.DOM.div(null, React.DOM.img({src: pic.image_source, className: "image"}))
-            )
-        );
-    }
-    calc.display = elements.length
-    console.log(calc)
-
-    return (
-        React.DOM.div({className: "picList", 'data-flex': "horizontal wrap grow"}, 
-            elements
-        )
-    );
-  }
-});
-
-var BeautifulSky = React.createClass({displayName: 'BeautifulSky',
-    getInitialState: function() {
-        return {data: [], indexes: {}, duplicates: 0};
-    },
-
-    loadPicsFromServer: function() {
-        oboe('tweets')
-        .node('!.*', function(pic){
-        	var data = this.state.data;
-        	var indexes = this.state.indexes;
-            var newData = data;
-            var duplicates = this.state.duplicates
-
-            if(!indexes[pic.tweet_id]){
-                indexes[pic.tweet_id] = true
-                
-                var i = _.sortedIndex(data, pic, function(item){ return new Date(item.created).getTime() }); 
-                var newData = _.initial(data, data.length-i)
-                    .concat([pic])
-                    .concat(_.rest(data, i));    
-
-            }else{
-                duplicates += 1;
-                //console.log('duplicates', duplicates);
-            }
-
-            this.setState({
-                duplicates: duplicates,
-                indexes: indexes, 
-                data: newData
+    var PicList = React.createClass({displayName: 'PicList',
+        render: function() {
+            var calc = {instagram: 0, twimg: 0, display: 0};
+            var picNodes = this.props.data
+            .filter(function(pic){
+                var instagram = pic.image_source.indexOf("https://instagram") == 0;
+                var twimg = pic.image_source.indexOf("http://pbs.twimg") == 0;
+                calc["instagram"] += instagram ? 1 : 0;
+                calc["twimg"] += twimg ? 1 : 0;
+                return instagram || twimg;
             });
-        }.bind(this));
-    },
+            // reverse
+            var index, elements = [];
+            for(index = picNodes.length-1; index > -1 ; index-- ) {
+                var pic = picNodes[index];
+                if(pic.image_source.indexOf("https://instagram") > -1
+                && pic.image_source.indexOf("media?size=l") == -1) {
+                    pic["image_source"]= pic.image_source + "media?size=l"
+                }
 
-    componentDidMount: function() {
-        this.loadPicsFromServer();
-    },
+                elements.push(
+                    Pic({key: index, author: pic.user, text: pic.tweet, created: pic.created}, 
+                        React.DOM.div(null, React.DOM.img({src: pic.image_source, className: "image"}))
+                    )
+                );
+            }
+            calc.display = elements.length;
 
-    render: function() {
-        return PicList({data: this.state.data});
-    }
-});
+            return (
+                React.DOM.div({className: "picList", 'data-flex': "horizontal wrap grow"}, 
+                    elements
+                )
+            );
+        }
+    });
 
-React.renderComponent(
-    BeautifulSky({url: "/images", pollInterval: 2000}),
-    document.getElementById('content')
-);
+    var BeautifulSky = React.createClass({displayName: 'BeautifulSky',
+        getInitialState: function() {
+            return {data: [], indexes: {}, duplicates: 0};
+        },
+
+        loadPicsFromServer: function() {
+            oboe('tweets')
+            .node('!.*', function(pic){
+                var data = this.state.data;
+                var indexes = this.state.indexes;
+                var newData = data;
+                var duplicates = this.state.duplicates
+
+                if(!indexes[pic.tweet_id]){
+                    indexes[pic.tweet_id] = true
+
+                    var i = _.sortedIndex(data, pic,
+                        function(item){ return new Date(item.created).getTime() });
+                    var newData = _.initial(data, data.length-i)
+                        .concat([pic])
+                        .concat(_.rest(data, i));
+
+                }else{
+                    duplicates += 1;
+                }
+
+                this.setState({
+                    duplicates: duplicates,
+                    indexes: indexes,
+                    data: newData
+                });
+            }.bind(this));
+        },
+
+        componentDidMount: function() {
+            this.loadPicsFromServer();
+        },
+
+        render: function() {
+            return PicList({data: this.state.data});
+        }
+    });
+
+    React.renderComponent(
+        BeautifulSky({url: "/images", pollInterval: 2000}),
+        document.getElementById('content')
+    );
