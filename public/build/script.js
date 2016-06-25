@@ -139,7 +139,7 @@ var Pic = React.createClass({displayName: 'Pic',
                 'searches: ', searches,
                 'cached: ', caches);
             return (React.DOM.div(null, 
-                React.DOM.small(null, "searches: ", searches, ", caches: ", caches), 
+                React.DOM.small({style: {marginLeft: '1rem'}}, "searches: ", searches, ", caches: ", caches), 
                 PicList({data: this.state.data})
             ));
         }

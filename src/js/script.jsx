@@ -138,7 +138,7 @@ var Pic = React.createClass({
                 'searches: ', searches,
                 'cached: ', caches);
             return (<div>
-                <small style={marginLeft: '1rem'}>searches: {searches}, caches: {caches}</small>
+                <small style={{marginLeft: '1rem'}}>searches: {searches}, caches: {caches}</small>
                 <PicList data={this.state.data} />
             </div>);
         }
